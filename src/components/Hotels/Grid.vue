@@ -20,7 +20,14 @@
       </thead>
       <tbody>
         <tr v-for="entry in filteredData" :key="entry.id">
-          <td v-for="key in columns" :key="key">{{entry[key]}}</td>
+          <td v-for="key in columns" :key="key">
+            <div v-if="entry[key]">{{ entry[key] }}</div>
+            <div v-else>
+              <a style="color: red;" @click="onDelete(entry.id)">
+                <span class="glyphicon glyphicon-trash"></span>
+              </a>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -75,6 +82,9 @@ export default {
     sortBy: function (key) {
       this.sortKey = key;
       this.sortOrders[key] = this.sortOrders[key] * -1
+    },
+    onDelete(id) {
+      this.$emit('deleted', id);
     },
   },
   created(){

@@ -32,7 +32,8 @@
             <div class="panel-body">
               <HotelsGrid 
                 :data="grid.data"
-                :columns="grid.columns"/>
+                :columns="grid.columns"
+                @deleted="deleted"/>
               <HotelsPagination
                 :maxVisibleButtons=3
                 :totalPages="grid.totalPages"
@@ -51,7 +52,11 @@
 <script>
 import HotelsGrid from './Grid.vue'
 import HotelsPagination from './Pagination.vue'
-var api = 'http://api.local/';
+var api = 'http://api.local/'
+
+var requestHeaders = {
+  'Content-Type': 'text/plain;charset=utf-8'
+}
 
 export default {
   name: 'HotelsForm',
@@ -74,7 +79,7 @@ export default {
         total: 0,
         currentPage: 1,
         data: [],
-        columns: [ 'id', 'name', 'location' ]
+        columns: [ 'id', 'name', 'location', 'options']
       }
     }
   },
@@ -96,8 +101,26 @@ export default {
           console.log(error)
       })
     },
+    deleteHotel: function(id) {
+      var self = this;
+
+      axios.delete(api + 'hotels/' + id, { headers: requestHeaders }).then(function (response) {
+        if (response.status === 200) {
+          self.getHotels(self.grid.currentPage)
+        }
+      }).catch(function(error) {
+          console.log(error)
+      })
+    },
     pagechanged: function(page) {
       this.getHotels(page)
+    },
+    deleted: function (id) {
+      var confirmed = confirm('Are you sure you want to delete this item (' + id + ') ?')
+
+      if (confirmed) {
+        this.deleteHotel(id)
+      }
     }
   }
 }
