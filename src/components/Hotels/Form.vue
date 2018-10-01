@@ -30,14 +30,15 @@
           <legend>Records</legend>
           <div class="panel panel-default">
             <div class="panel-body">
-              <!-- <HotelsGrid /> -->
+              <HotelsGrid 
+                :data="grid.data"
+                :columns="grid.columns"/>
               <HotelsPagination
                 :maxVisibleButtons=3
                 :totalPages="grid.totalPages"
                 :total="grid.total"
                 :currentPage="grid.currentPage"
-                @pagechanged="pagechanged"
-                />
+                @pagechanged="pagechanged"/>
             </div>
           </div>
         </fieldset>
@@ -48,7 +49,7 @@
 </template>
 
 <script>
-// import HotelsGrid from './Grid.vue'
+import HotelsGrid from './Grid.vue'
 import HotelsPagination from './Pagination.vue'
 var api = 'http://api.local/';
 
@@ -59,7 +60,7 @@ export default {
     action: String
   },
   components: {
-    // HotelsGrid,
+    HotelsGrid,
     HotelsPagination
   },
   data: function () {
@@ -71,7 +72,9 @@ export default {
       grid: {
         totalPages: 0,
         total: 0,
-        currentPage: 1
+        currentPage: 1,
+        data: [],
+        columns: [ 'id', 'name', 'location' ]
       }
     }
   },
@@ -87,14 +90,14 @@ export default {
           self.grid.totalPages = response.data.last_page
           self.grid.total = response.data.total
           self.grid.currentPage = response.data.current_page
+          self.grid.data = response.data.data
         }
       }).catch(function(error) {
           console.log(error)
       })
     },
     pagechanged: function(page) {
-      this.grid.currentPage = page
-      this.getHotels(this.grid.currentPage)
+      this.getHotels(page)
     }
   }
 }

@@ -1,34 +1,30 @@
 <template>
-  Grid.vue
-
-<div class="wrapper">
-  <form id="search">
-    Search <input name="query" v-model="searchQuery">
-  </form>
-  <div id="grid-template">
-    <div class="table-header-wrapper">
-      <table class="table-header">
-        <thead>
-          <th v-for="key in columns"
-            @click="sortBy(key)"
-            :class="{ active: sortKey == key }">
-            {{ key | capitalize }}
-            <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
-          </th>
-        </thead>
-      </table>
+  <div class="table-responsive">
+    <div class="section">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="query">Search</label>
+          <input v-model="searchQuery" type="text" class="form-control" id="query" placeholder="Enter your query">
+        </div>
+      </div>
     </div>
-    <div class="table-body-wrapper">
-      <table class="table-body">
-        <tbody>
-          <tr v-for="entry in filteredData">
-            <td v-for="key in columns"> {{entry[key]}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="table table-striped">
+      <thead>
+        <th v-for="key in columns"
+          @click="sortBy(key)"
+          :class="{ active: sortKey == key }" :key="key"
+          class="text-center">
+          {{ key | capitalize }}
+          <span class="glyphicon" :class="sortOrders[key] > 0 ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span>
+        </th>
+      </thead>
+      <tbody>
+        <tr v-for="entry in filteredData" :key="entry.id">
+          <td v-for="key in columns" :key="key">{{entry[key]}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</div>
 </template>
 
 <script>

@@ -67,15 +67,14 @@ export default {
   },
   computed: {
     startPage() {
-      // When on the first page
       if (this.currentPage == 1) {
         return 1;
       }
-      // When on the last page
+
       if (this.currentPage == this.totalPages) {
         return this.totalPages - this.maxVisibleButtons;
       }
-      // When in between
+
       return this.currentPage - 1;
     },
     pages() {
