@@ -19,7 +19,7 @@
                   <small id="locationHelper" class="form-text text-muted">Please, enter an unique place.</small>
                 </div>
                 <div class="btn-group">
-                  <button type="submit" class="btn btn-primary mb-2">{{ action }}</button>
+                  <button type="button" @click="saveHotel(hotel)" class="btn btn-primary mb-2">{{ action }}</button>
                   <button type="reset" class="btn btn-default mb-2">Clean</button>
                 </div>
               </form>
@@ -54,10 +54,6 @@ import HotelsGrid from './Grid.vue'
 import HotelsPagination from './Pagination.vue'
 var api = 'http://api.local/'
 
-var requestHeaders = {
-  'Content-Type': 'text/plain;charset=utf-8'
-}
-
 export default {
   name: 'HotelsForm',
   props: {
@@ -87,6 +83,20 @@ export default {
     this.getHotels(this.grid.currentPage)
   },
   methods: {
+    saveHotel: function(hotel) {
+      var self = this;
+
+      axios.post(api + 'hotels', hotel).then(function (response) {
+        if (response.status === 200) {
+          self.getHotels(self.grid.currentPage)
+          self.hotel.name = null
+          self.hotel.location = null
+          alert('Done')
+        }
+      }).catch(function(error) {
+          alert(error)
+      })
+    },
     getHotels: function(page) {
       var self = this;
 
@@ -104,9 +114,10 @@ export default {
     deleteHotel: function(id) {
       var self = this;
 
-      axios.delete(api + 'hotels/' + id, { headers: requestHeaders }).then(function (response) {
+      axios.delete(api + 'hotels/' + id).then(function (response) {
         if (response.status === 200) {
           self.getHotels(self.grid.currentPage)
+          alert('Done')
         }
       }).catch(function(error) {
           console.log(error)
