@@ -30,7 +30,7 @@
           <legend>Records</legend>
           <div class="panel panel-default">
             <div class="panel-body">
-              <HotelsGrid />
+              <!-- <HotelsGrid /> -->
               <HotelsPagination
                 :maxVisibleButtons=3
                 :totalPages=5
@@ -47,8 +47,9 @@
 </template>
 
 <script>
-import HotelsGrid from './Grid.vue'
+// import HotelsGrid from './Grid.vue'
 import HotelsPagination from './Pagination.vue'
+var api = 'http://api/';
 
 export default {
   name: 'HotelsForm',
@@ -57,8 +58,23 @@ export default {
     action: String
   },
   components: {
-    HotelsGrid,
+    // HotelsGrid,
     HotelsPagination
+  },
+  mounted: function () {
+    axios
+      .get(api + 'hotels', {
+        headers: {
+			    'Access-Control-Allow-Origin': '*',
+			    Accept: 'application/json',
+			    'Content-Type': 'application/json',
+		    }
+      })
+      .then(function (response) {
+        console.log(response)
+      }).catch(function(error) {
+        console.log(error)
+      })
   }
 }
 </script>
