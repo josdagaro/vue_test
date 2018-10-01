@@ -10,12 +10,12 @@
               <form>
                 <div class="form-group">
                   <label for="name">Name</label>
-                  <input type="text" class="form-control" id="name" aria-describedby="nameHelper" placeholder="Enter name">
+                  <input v-model="hotel.name" type="text" class="form-control" id="name" aria-describedby="nameHelper" placeholder="Enter name">
                   <small id="nameHelper" class="form-text text-muted">It have to be an unique name.</small>
                 </div>
                 <div class="form-group">
                   <label for="location">Location</label>
-                  <input type="text" class="form-control" id="location" aria-describedby="locationHelper" placeholder="Enter location">
+                  <input v-model="hotel.location" type="text" class="form-control" id="location" aria-describedby="locationHelper" placeholder="Enter location">
                   <small id="locationHelper" class="form-text text-muted">Please, enter an unique place.</small>
                 </div>
                 <div class="btn-group">
@@ -33,9 +33,10 @@
               <!-- <HotelsGrid /> -->
               <HotelsPagination
                 :maxVisibleButtons=3
-                :totalPages=5
-                :total=50
-                :currentPage=1
+                :totalPages="grid.totalPages"
+                :total="grid.total"
+                :currentPage="grid.currentPage"
+                @pagechanged="pagechanged"
                 />
             </div>
           </div>
@@ -49,7 +50,7 @@
 <script>
 // import HotelsGrid from './Grid.vue'
 import HotelsPagination from './Pagination.vue'
-var api = 'http://api/';
+var api = 'http://api.local/';
 
 export default {
   name: 'HotelsForm',
@@ -61,20 +62,40 @@ export default {
     // HotelsGrid,
     HotelsPagination
   },
+  data: function () {
+    return {
+      hotel: {
+        name: null,
+        location: null
+      },
+      grid: {
+        totalPages: 0,
+        total: 0,
+        currentPage: 1
+      }
+    }
+  },
   mounted: function () {
-    axios
-      .get(api + 'hotels', {
-        headers: {
-			    'Access-Control-Allow-Origin': '*',
-			    Accept: 'application/json',
-			    'Content-Type': 'application/json',
-		    }
-      })
-      .then(function (response) {
-        console.log(response)
+    this.getHotels(this.grid.currentPage)
+  },
+  methods: {
+    getHotels: function(page) {
+      var self = this;
+
+      axios.get(api + 'hotels?page=' + page).then(function (response) {
+        if (response.status === 200) {
+          self.grid.totalPages = response.data.last_page
+          self.grid.total = response.data.total
+          self.grid.currentPage = response.data.current_page
+        }
       }).catch(function(error) {
-        console.log(error)
+          console.log(error)
       })
+    },
+    pagechanged: function(page) {
+      this.grid.currentPage = page
+      this.getHotels(this.grid.currentPage)
+    }
   }
 }
 </script>
